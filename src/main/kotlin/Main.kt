@@ -1,7 +1,9 @@
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -24,6 +26,7 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
@@ -38,7 +41,8 @@ import kotlin.io.path.Path
 @Composable
 fun App() {
     val searchUsers = remember { SearchUser() }
-    var textEditText by remember { mutableStateOf("Поиск") }
+    var textEditText by remember { mutableStateOf("") }
+    var textName by remember { mutableStateOf("Имя фамилия") }
 
 // Интерфейс
     Column (
@@ -47,83 +51,99 @@ fun App() {
             .padding(24.dp),
         )
     {
-        TextField(
+        OutlinedTextField(
             value = textEditText,
             modifier = Modifier
                 .fillMaxWidth()
-                .size(320.dp,48.dp)
-                .onKeyEvent { if(it.key == Key.Enter)
-                    searchUsers.main(Path(SearchUser.URL) , textEditText)
+                .padding(12.dp)
+                .onKeyEvent {
+                    if (it.key == Key.Enter)
+                        textName = searchUsers.personName(Path(SearchUser.URL), textEditText).toString()
                     true
-                }
-            ,
+                },
+
             shape = RoundedCornerShape(8.dp),
-            trailingIcon = @Composable{
+            trailingIcon = @Composable {
                 IconButton(
                     onClick = {
-                        searchUsers.main(Path(SearchUser.URL) , textEditText)
+                        textName = searchUsers.personName(Path(SearchUser.URL), textEditText).toString()
                     },
-            ){
+                ) {
                     Icon(
                         Icons.Default.Search,
-                    contentDescription = "search",
-                    tint = Color.Black
+                        contentDescription = "search",
+                        tint = Color.Black
                     )
+
                 }
             },
+            label = {Text(text = "Поиск сотрудника")},
+            placeholder = { Text(text="Введите фамилию сотрудника") },
             singleLine = true,
             onValueChange = {
-                textEditText =it
+                textEditText = it
             })
         Card(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(12.dp)
-            ,
-            elevation = 8.dp
-        ){
-            Box(modifier = Modifier
-                .fillMaxSize(),
+                .padding(12.dp),
+            border = BorderStroke(2.dp,MyColor.Violet),
+                elevation = 8.dp
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                   ,
 
-            ){
-                Row (
+                ) {
+                Column(
                     modifier = Modifier
-                        .fillMaxSize()
                         .padding(12.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                        ){
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     Image(
-                        modifier = Modifier.size(300.dp,300.dp),
+                        modifier = Modifier
+                            .size(300.dp, 300.dp)
+                            .border(3.dp,MyColor.Violet,RoundedCornerShape(2))
+                        ,
                         painter = rememberVectorPainter(Icons.Default.Person),
-                        contentDescription = "userphoto"
+                        contentDescription = "userphoto",
+                        alignment = Alignment.Center
                     )
-                    Column(modifier = Modifier
+                    Column(
+                        modifier = Modifier
+                            .padding(12.dp),
+                        verticalArrangement = Arrangement.Center
+                        ) {
+                        Text(text = textName )
+                    }
+                }
+                Row(
+                    modifier = Modifier
                         .padding(12.dp)
-                        .background(Color.Cyan)
+                        .fillMaxSize()
+                        .padding(start = 300.dp),
+                    horizontalArrangement = Arrangement.Center
 
-                    ){
-                        Text(text = "Имя фамилия")
+                    ) {
+                    Column(
+                        modifier = Modifier
+                            .padding(12.dp),
+
+                    ) {
+                        Text(text = "Информация по сотруднику:")
+
+
                     }
-                    Column(modifier = Modifier
-                        .padding(12.dp)
-                        .background(Color.Green)
-                    ){
-                        Text(text = "IP адреса:")
-                    }
-                    Column(modifier = Modifier
-                        .padding(12.dp)
-                        .background(Color.Red)
-                    ){
-                        Text(text = "Последние ПК")
-                    }
+
 
                 }
-
             }
-        }
 
+        }
     }
 }
+
 
 fun main() = application {
     Window(onCloseRequest = ::exitApplication)
@@ -131,4 +151,5 @@ fun main() = application {
         App()
 
     }
+
 }
