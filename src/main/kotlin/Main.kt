@@ -1,9 +1,6 @@
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -21,18 +18,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.Key.Companion.R
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.res.loadImageBitmap
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.layout.AlignmentLine
+import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import com.sun.tools.javac.Main
-import org.jetbrains.skia.ColorChannel
-import java.io.File
 import kotlin.io.path.Path
 
 
@@ -43,6 +35,8 @@ fun App() {
     val searchUsers = remember { SearchUser() }
     var textEditText by remember { mutableStateOf("") }
     var textName by remember { mutableStateOf("Имя фамилия") }
+    var textLogin by remember { mutableStateOf("Логин") }
+    var textLogOnOf by remember { mutableStateOf(" ") }
 
 // Интерфейс
     Column (
@@ -52,21 +46,27 @@ fun App() {
         )
     {
         OutlinedTextField(
-            value = textEditText,
+            value = textEditText.capitalize(),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(12.dp)
                 .onKeyEvent {
-                    if (it.key == Key.Enter)
-                        textName = searchUsers.personName(Path(SearchUser.URL), textEditText).toString()
-                    true
+                    if (it.key == Key.Enter) {
+                        textName = searchUsers.personName(Path(SearchUser.URL), textEditText)
+                        textLogin = searchUsers.personLogin(Path(SearchUser.URL), textEditText)
+                        textLogOnOf = searchUsers.personLogOnOff(Path(SearchUser.URL), textEditText)
+
+                    }
+                        true
+
                 },
 
             shape = RoundedCornerShape(8.dp),
             trailingIcon = @Composable {
                 IconButton(
                     onClick = {
-                        textName = searchUsers.personName(Path(SearchUser.URL), textEditText).toString()
+                        textName = searchUsers.personName(Path(SearchUser.URL), textEditText)
+                        textLogin = searchUsers.personLogin(Path(SearchUser.URL), textEditText).toString()
                     },
                 ) {
                     Icon(
@@ -110,32 +110,37 @@ fun App() {
                         contentDescription = "userphoto",
                         alignment = Alignment.Center
                     )
-                    Column(
+                    Row(
                         modifier = Modifier
                             .padding(12.dp),
-                        verticalArrangement = Arrangement.Center
+                        horizontalArrangement = Arrangement.Center
                         ) {
                         Text(text = textName )
+                        Text(text=" - $textLogin")
                     }
                 }
                 Row(
                     modifier = Modifier
                         .padding(12.dp)
                         .fillMaxSize()
-                        .padding(start = 300.dp),
+                        .padding(start = 310.dp),
                     horizontalArrangement = Arrangement.Center
 
                     ) {
                     Column(
                         modifier = Modifier
-                            .padding(12.dp),
+                            .fillMaxWidth()
+                            .background(Color.Red),
+                        horizontalAlignment = Alignment.CenterHorizontally
 
                     ) {
-                        Text(text = "Информация по сотруднику:")
+                        Text(
+                            text = "Информация по сотруднику:")
 
-
+                        Text(
+                            text =textLogOnOf)
+                        ListItem(textLogOnOf)
                     }
-
 
                 }
             }
@@ -143,13 +148,16 @@ fun App() {
         }
     }
 }
+@Composable
+private fun ListItem(data:String){
+    println(data)
+}
 
 
 fun main() = application {
     Window(onCloseRequest = ::exitApplication)
     {
         App()
-
     }
 
 }
