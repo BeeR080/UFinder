@@ -15,16 +15,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.layout.AlignmentLine
-import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import java.io.File
 import kotlin.io.path.Path
 
 
@@ -37,6 +36,7 @@ fun App() {
     var textName by remember { mutableStateOf("Имя фамилия") }
     var textLogin by remember { mutableStateOf("Логин") }
     var textLogOnOf by remember { mutableStateOf(" ") }
+    var textImage by remember { mutableStateOf("C:\\ico_find.png") }
 
 // Интерфейс
     Column (
@@ -55,10 +55,9 @@ fun App() {
                         textName = searchUsers.personName(Path(SearchUser.URL), textEditText)
                         textLogin = searchUsers.personLogin(Path(SearchUser.URL), textEditText)
                         textLogOnOf = searchUsers.personLogOnOff(Path(SearchUser.URL), textEditText)
-
+                        textImage = searchUsers.getImage(textName)
                     }
                         true
-
                 },
 
             shape = RoundedCornerShape(8.dp),
@@ -74,11 +73,11 @@ fun App() {
                         contentDescription = "search",
                         tint = Color.Black
                     )
-
                 }
             },
             label = {Text(text = "Поиск сотрудника")},
-            placeholder = { Text(text="Введите фамилию сотрудника") },
+            placeholder = {
+                Text(text="Введите фамилию сотрудника") },
             singleLine = true,
             onValueChange = {
                 textEditText = it
@@ -102,11 +101,12 @@ fun App() {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Image(
+                        imageFromFile(File(textImage)),
                         modifier = Modifier
-                            .size(300.dp, 300.dp)
+                            .size(250.dp, 250.dp)
                             .border(3.dp,MyColor.Violet,RoundedCornerShape(2))
                         ,
-                        painter = rememberVectorPainter(Icons.Default.Person),
+                      // painter = rememberVectorPainter(Icons.Default.Person),
                         contentDescription = "userphoto",
                         alignment = Alignment.Center
                     )
@@ -129,8 +129,7 @@ fun App() {
                     ) {
                     Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .background(Color.Red),
+                            .fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
 
                     ) {
@@ -153,7 +152,10 @@ private fun ListItem(data:String){
     println(data)
 }
 
+fun imageFromFile(file: File): ImageBitmap {
 
+    return org.jetbrains.skia.Image.makeFromEncoded(file.readBytes()).toComposeImageBitmap()
+}
 fun main() = application {
     Window(onCloseRequest = ::exitApplication)
     {
