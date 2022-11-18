@@ -5,6 +5,8 @@ class MyColor {
 
     companion object{
         val Violet = Color(0xFF5e16db)
+        val DarkViolet = Color(0xFF14111a)
+        val BlackViolet = Color(0xFF040208)
         val Black = Color(0xFF000000)
         val DarkGray = Color(0xFF444444)
         val Gray = Color(0xFF888888)

@@ -2,9 +2,11 @@
 import java.io.File
 import java.io.FileReader
 import java.lang.Exception
+import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.function.Predicate
+import java.util.stream.Collectors
 
 
 class SearchUser() {
@@ -39,13 +41,11 @@ class SearchUser() {
                 try {
                     val openfile = FileReader(filePath)
                     endfile = openfile.readLines().takeLast(6).toString()
-                    endFileList = endfile.split(";").map { it -> it.trim()}.toMutableList()
+                    endFileList = endfile.split(";").map { it+"\n"}.toMutableList()
                 } catch (e: Exception) {
                     println(e.toString())
                 }
-
             }
-
         }
         return endFileList.toString()
     }
@@ -72,39 +72,19 @@ class SearchUser() {
     }
 
 
-    fun getImage(personName:String):String{
+    fun getImage(personName:String):String {
         var path = URL_IMAGE
-        var f = File(path)
-        var endFileImage=""
-        var filelist = f.listFiles()
-        for (files in filelist) {
-            if (files.name.startsWith(personName)) {
-                path = URL_IMAGE
-                val filePath = File(path, files.name)
-                     endFileImage = filePath.toString()
-            }else{
-                path = URL_IMAGE_OLD
-                val fOld = File(URL_IMAGE_OLD)
-                val filelistOld = fOld.listFiles()
-                for (filesOld in filelistOld){
-                    if (filesOld.name.startsWith(personName)){
-                val filePath = File(path.toString(), filesOld.name)
-                endFileImage = filePath.toString()
-            }
-                }
-            }
-
-        }
+     Files.walk(Paths.get(path))
+         .filter(Files::isRegularFile)
+         .collect(Collectors.toList())
+        var endFileImage = ""
         return endFileImage
     }
 companion object{
     val URL = Paths.get("R:\\IT\\Admin\\Internal\\LogOnOff\\LogOnOff_New")
         .toAbsolutePath()
         .toString()
-    val URL_IMAGE_OLD = Paths.get("R:\\Common\\Фото_сотрудников_(база)\\Москва")
-        .toAbsolutePath()
-        .toString()
-    val URL_IMAGE = Paths.get("R:\\Common\\Фото_сотрудников_(база)\\Москва (новые фотографии)\\")
+    val URL_IMAGE = Paths.get("R:\\Common\\Фото_сотрудников_(база)\\Москва\\")
         .toAbsolutePath()
         .toString()
 }
