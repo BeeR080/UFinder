@@ -6,7 +6,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,13 +21,13 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.FrameWindowScope
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import java.io.File
-import javax.swing.border.Border
+import java.nio.file.Path
 import kotlin.io.path.Path
 
 
@@ -41,7 +40,7 @@ fun App() {
     var textName by remember { mutableStateOf("Имя фамилия") }
     var textLogin by remember { mutableStateOf("Логин") }
     var textLogOnOf by remember { mutableStateOf(" ") }
-    var textImage by remember { mutableStateOf("R:\\Common\\Фото_сотрудников_(база)\\Москва\\Якушкин Константин Сергеевич_пропуск.jpg") }
+    var textImage = File(SearchUser.DEFAULT_IMAGE).toString()
 
 // Интерфейс
     Column (
@@ -60,7 +59,7 @@ fun App() {
                         textName = searchUsers.personName(Path(SearchUser.URL), textEditText)
                         textLogin = searchUsers.personLogin(Path(SearchUser.URL), textEditText)
                         textLogOnOf = searchUsers.personLogOnOff(Path(SearchUser.URL), textEditText)
-                        //textImage = searchUsers.getImage(textName)
+                        textImage = searchUsers.getImage(textName)
                     }
                     true
                 },
@@ -70,7 +69,7 @@ fun App() {
                 IconButton(
                     onClick = {
                         textName = searchUsers.personName(Path(SearchUser.URL), textEditText)
-                        textLogin = searchUsers.personLogin(Path(SearchUser.URL), textEditText).toString()
+                        textLogin = searchUsers.personLogin(Path(SearchUser.URL), textEditText)
                     },
                 ) {
                     Icon(
@@ -83,12 +82,12 @@ fun App() {
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = MyColor.Violet,
                 unfocusedBorderColor = MyColor.Gray,
-                textColor = MyColor.White
+                textColor = MyColor.Black
             ),
 
             label = {
                 Text(
-                    color = MyColor.White,
+                    color = MyColor.Violet,
                     text = "Поиск сотрудника"
                 )
             },
@@ -117,7 +116,7 @@ fun App() {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(MyColor.DarkViolet),
+                        .background(MyColor.White),
 
                     ) {
                     Column(
@@ -128,11 +127,11 @@ fun App() {
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Image(
-                            imageFromFile(File(textImage)),
+                            imageFromFile(File(textImage.toString())),
                             modifier = Modifier
                                 .size(200.dp, 200.dp)
                                 .clip(CircleShape)
-                                .border(3.dp, MyColor.White, CircleShape),
+                                .border(3.dp, MyColor.LightGray, CircleShape),
                             contentDescription = "userphoto",
                             alignment = Alignment.Center
                         )
@@ -144,11 +143,11 @@ fun App() {
                         ) {
                             Text(
                                 text = textName,
-                                color = MyColor.White
+                                color = MyColor.Black
                             )
                             Text(
                                 text = " - $textLogin",
-                                color = MyColor.White
+                                color = MyColor.Black
                             )
                         }
                     }
@@ -167,17 +166,20 @@ fun App() {
             ) {
                 Column (modifier = Modifier
                     .fillMaxSize()
-                    .background(MyColor.DarkViolet)
+                    .background(MyColor.White)
                     ,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ){
 
                 Text(
-                    color = MyColor.White,
-                    text = "Информация по сотруднику:",
+                    color = MyColor.Black,
+                    fontSize = 18.sp ,
+                    fontWeight = FontWeight.W800,
+                    text = "LogOnOff пользователя:",
                     modifier = Modifier
                         .padding(
                             top = 12.dp)
+
                 )
 
                     OutlinedTextField(
@@ -189,7 +191,7 @@ fun App() {
                         colors = TextFieldDefaults.outlinedTextFieldColors(
                             focusedBorderColor = MyColor.Violet,
                             unfocusedBorderColor = MyColor.Gray,
-                            textColor = MyColor.LightGray
+                            textColor = MyColor.Black
                         ),
                         readOnly = true,
                         singleLine = false,
@@ -206,8 +208,9 @@ fun App() {
 
 
 fun imageFromFile(file: File): ImageBitmap {
-
-    return org.jetbrains.skia.Image.makeFromEncoded(file.readBytes()).toComposeImageBitmap()
+    return org.jetbrains.skia.Image.makeFromEncoded(file
+        .readBytes())
+        .toComposeImageBitmap()
 }
 fun main() = application {
     Window(
@@ -217,7 +220,7 @@ fun main() = application {
         resizable = false)
     {
         MaterialTheme(colors = darkColors()) {
-            Box(Modifier.fillMaxSize().background(MyColor.DarkViolet))
+            Box(Modifier.fillMaxSize().background(MyColor.Transparent))
         }
 
         App()
