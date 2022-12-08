@@ -21,13 +21,14 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import org.jetbrains.skia.Pattern
 import java.io.File
-import java.nio.file.Path
 import kotlin.io.path.Path
 
 
@@ -40,6 +41,7 @@ fun App() {
     var textName by remember { mutableStateOf("Имя фамилия") }
     var textLogin by remember { mutableStateOf("Логин") }
     var textLogOnOf by remember { mutableStateOf(" ") }
+    var isErrors by remember { mutableStateOf(false) }
     var textImage = File(SearchUser.DEFAULT_IMAGE).toString()
 
 // Интерфейс
@@ -58,7 +60,7 @@ fun App() {
                     if (it.key == Key.Enter) {
                         textName = searchUsers.personName(Path(SearchUser.URL), textEditText)
                         textLogin = searchUsers.personLogin(Path(SearchUser.URL), textEditText)
-                        textLogOnOf = searchUsers.personLogOnOff(Path(SearchUser.URL), textEditText)
+                        textLogOnOf = searchUsers.personLogOnOff(Path(SearchUser.URL), textName)
                         textImage = searchUsers.getImage(textName)
                     }
                     true
@@ -70,6 +72,8 @@ fun App() {
                     onClick = {
                         textName = searchUsers.personName(Path(SearchUser.URL), textEditText)
                         textLogin = searchUsers.personLogin(Path(SearchUser.URL), textEditText)
+                        textLogOnOf = searchUsers.personLogOnOff(Path(SearchUser.URL), textName)
+                        textImage = searchUsers.getImage(textName)
                     },
                 ) {
                     Icon(
@@ -97,10 +101,14 @@ fun App() {
                     text = "Введите фамилию сотрудника"
                 )
             },
+            isError = isErrors,
             singleLine = true,
+
             onValueChange = {
                 textEditText = it
-            })
+
+            }
+        )
         Row(modifier = Modifier
             .fillMaxSize()
 
@@ -127,7 +135,7 @@ fun App() {
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Image(
-                            imageFromFile(File(textImage.toString())),
+                            imageFromFile(File(textImage)),
                             modifier = Modifier
                                 .size(200.dp, 200.dp)
                                 .clip(CircleShape)
@@ -135,18 +143,20 @@ fun App() {
                             contentDescription = "userphoto",
                             alignment = Alignment.Center
                         )
-                        Row(
+                        Column (
                             modifier = Modifier
                                 .padding(12.dp)
-                                .fillMaxSize(),
-                            horizontalArrangement = Arrangement.Center
+                                .fillMaxSize()
+                            ,
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
                                 text = textName,
                                 color = MyColor.Black
                             )
                             Text(
-                                text = " - $textLogin",
+                                fontWeight = FontWeight.W800,
+                                text = textLogin,
                                 color = MyColor.Black
                             )
                         }
@@ -158,7 +168,7 @@ fun App() {
             Card(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .width(500.dp)
+                    .width(800.dp)
                     .padding(12.dp),
                 elevation = 8.dp,
                 shape = RoundedCornerShape(24.dp),
@@ -191,7 +201,11 @@ fun App() {
                         colors = TextFieldDefaults.outlinedTextFieldColors(
                             focusedBorderColor = MyColor.Violet,
                             unfocusedBorderColor = MyColor.Gray,
-                            textColor = MyColor.Black
+                            textColor = MyColor.Black,
+
+                        ),
+                        textStyle = TextStyle(
+                            fontSize = 19.sp
                         ),
                         readOnly = true,
                         singleLine = false,
@@ -214,10 +228,11 @@ fun imageFromFile(file: File): ImageBitmap {
 }
 fun main() = application {
     Window(
+
         title = "UFinder",
         icon = rememberVectorPainter(Icons.Default.Search),
         onCloseRequest = ::exitApplication,
-        resizable = false)
+        resizable = true)
     {
         MaterialTheme(colors = darkColors()) {
             Box(Modifier.fillMaxSize().background(MyColor.Transparent))

@@ -5,6 +5,7 @@ import java.lang.IndexOutOfBoundsException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.function.Predicate
 import java.util.stream.Collectors
 import kotlin.Exception
 import kotlin.io.path.name
@@ -31,24 +32,38 @@ class SearchUser() {
         return endFileName
     }
 
-    fun personLogOnOff(path: Path, userName:String):String{
+    fun personLogOnOff(path: Path, userName:String): String {
         val f = File(path.toUri())
-        var endfile = ""
-        var endFileList =""
+        var endfile: List<String> = emptyList()
+        var endFileList: List<String> = emptyList()
         val filelist = f.listFiles()
         for (files in filelist) {
             if (files.name.startsWith(userName)) {
                 val filePath = File(path.toString(), files.name)
                 try {
                     val openfile = FileReader(filePath)
-                    endfile = openfile.readLines().takeLast(6).toString()
-                    endFileList = endfile.split(";").map { it+"\n"}.toString()
+                    endfile = openfile
+                        .readLines()
+                        .takeLast(6)
+                        .map { mutableListOf( it
+                        .split(";")
+                        .slice(listOf(0,2,3,4,5))+"\n")
+                        .toString()
+                            .replace("[","")
+                            .replace("]","")
+                            .replace(",",";")
+                    }
+                    println(endfile)
+                    endFileList = endfile
                 } catch (e: Exception) {
                     println(e.toString())
                 }
             }
         }
-        return endFileList
+        return endFileList.toString()
+            .replace("[","")
+            .replace("]","")
+            .replace(",","")
     }
 
 
@@ -61,7 +76,7 @@ class SearchUser() {
                 val filePath = File(path.toString(), files.name)
                 try {
                     val openfile = FileReader(filePath)
-                    val endfile = openfile.readLines().takeLast(6).toString()
+                    val endfile = openfile.readLines().takeLast(1).toString()
                     endFileList = endfile.split(";").map { it -> it.trim() }
                 } catch (e: Exception) {
                     println(e.toString())
