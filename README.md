@@ -11,4 +11,4 @@
 
 
 ## Стек:
-📝JetPack Compose
+📝JetPack Compose.
