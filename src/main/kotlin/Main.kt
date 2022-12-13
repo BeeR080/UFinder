@@ -52,17 +52,28 @@ fun App() {
         )
     {
         OutlinedTextField(
-            value = textEditText.capitalize(),
+            value = textEditText
+                .capitalize()
+                .trimStart(' ')
+                .replace("\\s+".toRegex()," "),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(12.dp)
                 .onKeyEvent {
-                    if (it.key == Key.Enter) {
+                    if (it.key == Key.Enter ) {
+                        if (textEditText.isNotBlank()){
                         textName = searchUsers.personName(Path(SearchUser.URL), textEditText)
                         textLogin = searchUsers.personLogin(Path(SearchUser.URL), textEditText)
                         textLogOnOf = searchUsers.personLogOnOff(Path(SearchUser.URL), textName)
                         textImage = searchUsers.getImage(textName)
+                            isErrors = false
+
                     }
+                        else{
+                            isErrors = true
+                        }
+                    }
+
                     true
                 },
             shape = RoundedCornerShape(8.dp),
@@ -70,11 +81,18 @@ fun App() {
             trailingIcon = @Composable {
                 IconButton(
                     onClick = {
+                        if (textEditText.isNotBlank()){
                         textName = searchUsers.personName(Path(SearchUser.URL), textEditText)
                         textLogin = searchUsers.personLogin(Path(SearchUser.URL), textEditText)
                         textLogOnOf = searchUsers.personLogOnOff(Path(SearchUser.URL), textName)
                         textImage = searchUsers.getImage(textName)
-                    },
+                            isErrors = false
+
+                    }
+                        else{
+                            isErrors = true
+                        }
+                              },
                 ) {
                     Icon(
                         Icons.Default.Search,
