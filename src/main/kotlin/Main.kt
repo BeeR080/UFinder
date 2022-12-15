@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import org.jetbrains.skia.Pattern
 import java.io.File
 import kotlin.io.path.Path
 
@@ -43,6 +43,11 @@ fun App() {
     var textLogOnOf by remember { mutableStateOf(" ") }
     var isErrors by remember { mutableStateOf(false) }
     var textImage = File(SearchUser.DEFAULT_IMAGE).toString()
+    val errorMessage ="* поле ввода не должно быть пустым " +
+            "\n* введенные данные не совпадают с данными в базе сотрдников"
+
+
+
 
 // Интерфейс
     Column (
@@ -51,6 +56,7 @@ fun App() {
             .padding(24.dp),
         )
     {
+
         OutlinedTextField(
             value = textEditText
                 .capitalize()
@@ -62,71 +68,114 @@ fun App() {
                 .onKeyEvent {
                     if (it.key == Key.Enter ) {
                         if (textEditText.isNotBlank()){
+                            isErrors=false
                         textName = searchUsers.personName(Path(SearchUser.URL), textEditText)
-                        textLogin = searchUsers.personLogin(Path(SearchUser.URL), textEditText)
+                        textLogin = searchUsers.personLogin(Path(SearchUser.URL), textName)
                         textLogOnOf = searchUsers.personLogOnOff(Path(SearchUser.URL), textName)
                         textImage = searchUsers.getImage(textName)
-                            isErrors = false
+                            println(textImage)
+                            println(textName)
+                            println(textLogin)
 
                     }
                         else{
                             isErrors = true
+
+
                         }
                     }
 
                     true
                 },
+
             shape = RoundedCornerShape(8.dp),
 
             trailingIcon = @Composable {
                 IconButton(
                     onClick = {
                         if (textEditText.isNotBlank()){
+                            isErrors = false
                         textName = searchUsers.personName(Path(SearchUser.URL), textEditText)
-                        textLogin = searchUsers.personLogin(Path(SearchUser.URL), textEditText)
+                        textLogin = searchUsers.personLogin(Path(SearchUser.URL), textName)
                         textLogOnOf = searchUsers.personLogOnOff(Path(SearchUser.URL), textName)
                         textImage = searchUsers.getImage(textName)
-                            isErrors = false
+                            println(textImage)
+                            println(textName)
+                            println(textLogin)
+
 
                     }
                         else{
                             isErrors = true
+
                         }
                               },
                 ) {
+                    if(isErrors==false){
                     Icon(
                         Icons.Default.Search,
                         contentDescription = "search",
                         tint = MyColor.Gray
                     )
                 }
+                    else{
+                        Icon(
+                            Icons.Filled.Warning,
+                            "error",
+                            tint = MaterialTheme.colors.error)
+
+                    }
+                }
             },
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = MyColor.Violet,
+                unfocusedLabelColor = MyColor.Gray,
                 unfocusedBorderColor = MyColor.Gray,
                 textColor = MyColor.Black
             ),
 
             label = {
+                if(isErrors==false){
                 Text(
                     color = MyColor.Violet,
                     text = "Поиск сотрудника"
                 )
-            },
+            }
+                else{
+                    Text(
+                        color = MaterialTheme.colors.error,
+                        text = "Поиск сотрудника",
+                    )
+                }
+
+                    },
             placeholder = {
                 Text(
                     color = MyColor.Gray,
                     text = "Введите фамилию сотрудника"
                 )
+
             },
-            isError = isErrors,
-            singleLine = true,
 
             onValueChange = {
                 textEditText = it
 
-            }
+            },
+            isError = isErrors,
+            singleLine = true,
+
         )
+        if(isErrors==true)
+            Text(
+                text=errorMessage,
+                color = MaterialTheme.colors.error,
+                modifier = Modifier.padding(start = 24.dp)
+            )
+
+
+
+
+
         Row(modifier = Modifier
             .fillMaxSize()
 

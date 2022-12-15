@@ -12,20 +12,21 @@ import kotlin.io.path.name
 
 
 class SearchUser() {
-
     fun personName(path: Path, userName:String):String {
         val f = File(path.toUri())
-        var endFileName :String = ""
+        var endFileName=""
         val filelist = f.listFiles()
         for (files in filelist) {
             if (files.name.startsWith(userName)) {
-               // val filePath = File(path.toString(), files.name)
                 try {
-                    endFileName = files.name.substring(0,files.name.indexOf("."))
-                    println(endFileName)
+                    endFileName = files.name
+                        .substring(
+                            0,
+                            files.name
+                            .indexOf("."))
 
                 } catch (e: Exception) {
-                    println(e.toString())
+                  endFileName =""
                 }
             }
         }
@@ -40,6 +41,7 @@ class SearchUser() {
         for (files in filelist) {
             if (files.name.startsWith(userName)) {
                 val filePath = File(path.toString(), files.name)
+                if(userName!="error"){
                 try {
                     val openfile = FileReader(filePath)
                     endfile = openfile
@@ -53,11 +55,13 @@ class SearchUser() {
                             .replace("]","")
                             .replace(",",";")
                     }
-                    println(endfile)
                     endFileList = endfile
                 } catch (e: Exception) {
-                    println(e.toString())
                 }
+            }
+                else{
+                    endFileList = listOf("[,]error")
+            }
             }
         }
         return endFileList.toString()
@@ -69,6 +73,7 @@ class SearchUser() {
 
     fun personLogin(path:Path, userName:String):String {
         val f = File(path.toUri())
+        var login = ""
         var endFileList :List<String> = emptyList()
         val filelist = f.listFiles()
         for (files in filelist) {
@@ -78,13 +83,14 @@ class SearchUser() {
                     val openfile = FileReader(filePath)
                     val endfile = openfile.readLines().takeLast(1).toString()
                     endFileList = endfile.split(";").map { it -> it.trim() }
-                } catch (e: Exception) {
-                    println(e.toString())
+                    login = endFileList.get(3)
+                } catch (e: IndexOutOfBoundsException) {
+                    login ="error"
                 }
             }
 
         }
-        return endFileList.get(3)
+        return login
     }
 
 
@@ -95,13 +101,11 @@ class SearchUser() {
      val walk = Files.walk(Paths.get(path))
          .filter{it.name.startsWith(personName)}
          .collect(Collectors.toList()).get(0).toString()
-        println(walk)
          endFileImage = walk
 
     }catch (e:IndexOutOfBoundsException){
         path = DEFAULT_IMAGE
             val file = File(path)
-            println(file)
             endFileImage = file.toString()
     }
         return endFileImage
