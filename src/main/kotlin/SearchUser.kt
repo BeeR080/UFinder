@@ -23,9 +23,10 @@ class SearchUser() {
                             0,
                             files.name
                             .indexOf("."))
-
             }
-
+            if(!endFileName.startsWith(userName)){
+                endFileName="Not found"
+            }
         }
         return endFileName
     }

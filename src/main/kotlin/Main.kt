@@ -73,9 +73,9 @@ fun App() {
                         textLogin = searchUsers.personLogin(Path(SearchUser.URL), textName)
                         textLogOnOf = searchUsers.personLogOnOff(Path(SearchUser.URL), textName)
                         textImage = searchUsers.getImage(textName)
-                            println(textImage)
-                            println(textName)
-                            println(textLogin)
+                            if (textName=="Not found")
+                                isErrors= true
+
 
                     }
                         else{
@@ -99,9 +99,9 @@ fun App() {
                         textLogin = searchUsers.personLogin(Path(SearchUser.URL), textName)
                         textLogOnOf = searchUsers.personLogOnOff(Path(SearchUser.URL), textName)
                         textImage = searchUsers.getImage(textName)
-                            println(textImage)
-                            println(textName)
-                            println(textLogin)
+                            if (textName=="Not found")
+                                isErrors= true
+
 
 
                     }
