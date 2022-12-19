@@ -159,7 +159,6 @@ fun App() {
 
             onValueChange = {
                 textEditText = it
-
             },
             isError = isErrors,
             singleLine = true,

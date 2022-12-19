@@ -18,17 +18,14 @@ class SearchUser() {
         val filelist = f.listFiles()
         for (files in filelist) {
             if (files.name.startsWith(userName)) {
-                try {
                     endFileName = files.name
                         .substring(
                             0,
                             files.name
                             .indexOf("."))
 
-                } catch (e: Exception) {
-                  endFileName =""
-                }
             }
+
         }
         return endFileName
     }
@@ -58,8 +55,8 @@ class SearchUser() {
                     endFileList = endfile
                 } catch (e: Exception) {
                 }
-            }
-                else{
+
+            } else{
                     endFileList = listOf("[,]error")
             }
             }
