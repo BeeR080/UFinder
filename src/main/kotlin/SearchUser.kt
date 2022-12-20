@@ -115,7 +115,7 @@ companion object{
     val URL = Paths.get("R:\\IT\\Admin\\Internal\\LogOnOff\\LogOnOff_New")
         .toAbsolutePath()
         .toString()
-    val URL_IMAGE = Paths.get("R:\\Common\\Фото_сотрудников_(база)\\")
+    val URL_IMAGE = Paths.get("\\\\192.168.6.55\\Updates\\Manager")
         .toAbsolutePath()
         .toString()
 }
