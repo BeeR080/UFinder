@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Warning
@@ -32,6 +33,7 @@ import java.io.File
 import kotlin.io.path.Path
 
 
+
 @OptIn(ExperimentalComposeUiApi::class)
 @Preview
 @Composable
@@ -45,17 +47,20 @@ fun App() {
     var textImage = File(SearchUser.DEFAULT_IMAGE).toString()
     val errorMessage ="* поле ввода не должно быть пустым " +
             "\n* введенные данные не совпадают с данными в базе сотрдников"
-
-
+    var tabIndex by remember { mutableStateOf(0) }
+    val tabList = listOf("Недавние записи","За все время")
 
 
 // Интерфейс
+    // Основной экран
     Column (
         modifier = Modifier
             .fillMaxSize()
             .padding(24.dp),
         )
     {
+
+// Поле ввода логина/пароля
 
         OutlinedTextField(
             value = textEditText
@@ -75,7 +80,6 @@ fun App() {
                         textImage = searchUsers.getImage(textLogin)
                             if (textName=="Not found")
                                 isErrors= true
-
 
                     }
                         else{
@@ -170,15 +174,12 @@ fun App() {
                 color = MaterialTheme.colors.error,
                 modifier = Modifier.padding(start = 24.dp)
             )
-
-
-
-
-
         Row(modifier = Modifier
             .fillMaxSize()
 
         ) {
+
+            // Карточка пользователя
             Card(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -231,6 +232,9 @@ fun App() {
                 }
 
             }
+
+
+            // Поле вывода логов
             Card(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -251,12 +255,57 @@ fun App() {
                     color = MyColor.Black,
                     fontSize = 18.sp ,
                     fontWeight = FontWeight.W800,
-                    text = "LogOnOff пользователя:",
+                    text = "Логи пользователя:",
                     modifier = Modifier
                         .padding(
                             top = 12.dp)
 
                 )
+                    // Tab элементы Последние записи и За все время
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 4.dp)
+                    ){
+                        TabRow(
+                            selectedTabIndex = tabIndex,
+                            backgroundColor = MyColor.White,
+                            contentColor = MyColor.Black,
+                            indicator = {
+                                TabRowDefaults.Indicator(modifier =
+                                Modifier.tabIndicatorOffset(it[tabIndex]),
+                                    color = MyColor.Violet,
+                                )
+                            }
+
+
+                        ){
+                            tabList.forEachIndexed{index,title ->
+                                Tab(
+                                    selected = tabIndex == index,
+                                    onClick = {
+                                        tabIndex = index
+
+                                    },
+                                    selectedContentColor = MyColor.Violet,
+                                    text = {
+                                        Text(
+                                            text = title,
+                                            color = if(tabIndex==index) MyColor.Violet else MyColor.DarkGray
+                                        )
+                                    }
+                                )
+                            }
+                        }
+
+                    }
+                    when(tabIndex){
+                        0-> textLogOnOf = searchUsers.personLogOnOff(Path(SearchUser.URL), textName)
+                        1-> textLogOnOf = searchUsers.personLogOnOffAllLines(Path(SearchUser.URL), textName)
+                    }
+
+                    // Поле вовода лога о пользователе
 
                     OutlinedTextField(
                     value = textLogOnOf,
@@ -285,6 +334,38 @@ fun App() {
 
     }
 }
+
+/*@Composable
+fun tableLayout(){
+    var tabIndex by remember { mutableStateOf(0) }
+    val tabList = listOf("Недавние записи","За все время")
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ){
+        TabRow(
+            selectedTabIndex = tabIndex,
+            backgroundColor = MyColor.White
+        ){
+            tabList.forEachIndexed{index,title ->
+                Tab(
+                    selected = tabIndex == index,
+                    onClick = {
+                        tabIndex = index
+                    },
+                    text = {
+                        Text(text = title
+                        )
+                    }
+                )
+            }
+        }
+
+    }
+    when(tabIndex){
+        0-> textLogOnOf = searchUsers.personLogOnOff(Path(SearchUser.URL), textName)
+        1-> textLogOnOf = searchUsers.personLogOnOffAllLines(Path(SearchUser.URL), textName)
+    }
+}*/
 
 
 fun imageFromFile(file: File): ImageBitmap {

@@ -67,6 +67,41 @@ class SearchUser() {
             .replace("]","")
             .replace(",","")
     }
+    fun personLogOnOffAllLines(path: Path, userName:String): String {
+        val f = File(path.toUri())
+        var endfile: List<String> = emptyList()
+        var endFileList: List<String> = emptyList()
+        val filelist = f.listFiles()
+        for (files in filelist) {
+            if (files.name.startsWith(userName)) {
+                val filePath = File(path.toString(), files.name)
+                if(userName!="error"){
+                    try {
+                        val openfile = FileReader(filePath)
+                        endfile = openfile
+                            .readLines()
+                            .map { mutableListOf( it
+                                .split(";")
+                                .slice(listOf(0,2,3,4,5))+"\n")
+                                .toString()
+                                .replace("[","")
+                                .replace("]","")
+                                .replace(",",";")
+                            }
+                        endFileList = endfile
+                    } catch (e: Exception) {
+                    }
+
+                } else{
+                    endFileList = listOf("[,]error")
+                }
+            }
+        }
+        return endFileList.toString()
+            .replace("[","")
+            .replace("]","")
+            .replace(",","")
+    }
 
 
     fun personLogin(path:Path, userName:String):String {
@@ -101,7 +136,7 @@ class SearchUser() {
          .collect(Collectors.toList()).get(0).toString()
          endFileImage = walk
 
-    }catch (e:IndexOutOfBoundsException){
+    }catch (e:Exception){
         path = DEFAULT_IMAGE
             val file = File(path)
             endFileImage = file.toString()
