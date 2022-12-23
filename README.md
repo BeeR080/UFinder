@@ -7,7 +7,8 @@
 Файл с данными создается отдельным скриптом.
 
 ## Скрины работы программы:
-![Ufinder](https://user-images.githubusercontent.com/91463015/207065359-cc621349-5c53-4a2a-84fb-58c15d0f7c22.jpg)
+![photo_2022-12-22_18-12-27](https://user-images.githubusercontent.com/91463015/209164419-7b48f535-008b-4696-8101-b1b876b57bbe.jpg)
+
 
 
 ## Стек:
