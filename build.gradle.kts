@@ -33,6 +33,14 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "UFinder"
             packageVersion = "1.0.0"
+
+            windows{
+                packageVersion = "1.0.0"
+
+                msiPackageVersion = "1.0.0"
+
+                exePackageVersion = "1.0.0"
+        }
         }
     }
 }

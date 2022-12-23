@@ -1,4 +1,6 @@
 
+import androidx.compose.ui.text.capitalize
+import androidx.compose.ui.text.toLowerCase
 import java.io.File
 import java.io.FileReader
 import java.lang.IndexOutOfBoundsException
@@ -13,18 +15,27 @@ import kotlin.io.path.name
 
 class SearchUser() {
     fun personName(path: Path, userName:String):String {
+
         val f = File(path.toUri())
         var endFileName=""
+        var name = userName
+            .trim()
+            .split("\\s+".toRegex())
+            .map { it
+                .capitalize()
+            }
+            .joinToString(" ")
+
         val filelist = f.listFiles()
         for (files in filelist) {
-            if (files.name.startsWith(userName)) {
+            if (files.name.startsWith(name)) {
                     endFileName = files.name
                         .substring(
                             0,
                             files.name
                             .indexOf("."))
             }
-            if(!endFileName.startsWith(userName)){
+            if(!endFileName.startsWith(name)){
                 endFileName="Not found"
             }
         }

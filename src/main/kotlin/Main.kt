@@ -24,7 +24,9 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
@@ -66,7 +68,8 @@ fun App() {
             value = textEditText
                 .capitalize()
                 .trimStart(' ')
-                .replace("\\s+".toRegex()," "),
+                .replace("\\s+".toRegex()," ")
+                ,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(12.dp)
@@ -238,7 +241,7 @@ fun App() {
             Card(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .width(800.dp)
+                    .fillMaxWidth()
                     .padding(12.dp),
                 elevation = 8.dp,
                 shape = RoundedCornerShape(24.dp),
