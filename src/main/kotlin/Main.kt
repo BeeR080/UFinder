@@ -19,10 +19,14 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.res.loadImageBitmap
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.useResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
@@ -380,7 +384,7 @@ fun main() = application {
     Window(
 
         title = "UFinder",
-        icon = rememberVectorPainter(Icons.Default.Search),
+        icon = BitmapPainter(useResource("icons/UFinder.ico", ::loadImageBitmap)),
         onCloseRequest = ::exitApplication,
         resizable = true)
     {

@@ -33,8 +33,14 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "UFinder"
             packageVersion = "1.0.0"
+            description = "Find users in company"
+            copyright = "© 2023 by BeeRkA. All rights reserved."
+            vendor = "ABN Proggers"
+
 
             windows{
+                iconFile.set(project.file("search_user.ico"))
+
                 packageVersion = "1.0.0"
 
                 msiPackageVersion = "1.0.0"
