@@ -342,39 +342,6 @@ fun App() {
     }
 }
 
-/*@Composable
-fun tableLayout(){
-    var tabIndex by remember { mutableStateOf(0) }
-    val tabList = listOf("Недавние записи","За все время")
-    Column(
-        modifier = Modifier.fillMaxWidth()
-    ){
-        TabRow(
-            selectedTabIndex = tabIndex,
-            backgroundColor = MyColor.White
-        ){
-            tabList.forEachIndexed{index,title ->
-                Tab(
-                    selected = tabIndex == index,
-                    onClick = {
-                        tabIndex = index
-                    },
-                    text = {
-                        Text(text = title
-                        )
-                    }
-                )
-            }
-        }
-
-    }
-    when(tabIndex){
-        0-> textLogOnOf = searchUsers.personLogOnOff(Path(SearchUser.URL), textName)
-        1-> textLogOnOf = searchUsers.personLogOnOffAllLines(Path(SearchUser.URL), textName)
-    }
-}*/
-
-
 fun imageFromFile(file: File): ImageBitmap {
     return org.jetbrains.skia.Image.makeFromEncoded(file
         .readBytes())

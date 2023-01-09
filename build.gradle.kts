@@ -29,17 +29,19 @@ tasks.withType<KotlinCompile> {
 compose.desktop {
     application {
         mainClass = "MainKt"
+
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            appResourcesRootDir.set(project.layout.projectDirectory.dir("resources"))
             packageName = "UFinder"
             packageVersion = "1.0.0"
-            description = "Find users in company"
+            description = "UFinder"
             copyright = "© 2023 by BeeRkA. All rights reserved."
             vendor = "ABN Proggers"
 
 
             windows{
-                iconFile.set(project.file("search_user.ico"))
+                iconFile.set(project.file("UFinder.ico"))
 
                 packageVersion = "1.0.0"
 

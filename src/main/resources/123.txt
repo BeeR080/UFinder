@@ -1,0 +1,4 @@
+ D:\\Projects\\UFinder\\src\\main\\resources\\icons\\person.png  
+ R:\\IT\\Admin\\Internal\\LogOnOff\\LogOnOff_New
+ \\\\192.168.6.55\\Updates\\Manager
+      

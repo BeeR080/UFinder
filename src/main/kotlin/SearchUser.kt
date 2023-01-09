@@ -1,13 +1,10 @@
 
-import androidx.compose.ui.text.capitalize
-import androidx.compose.ui.text.toLowerCase
 import java.io.File
 import java.io.FileReader
 import java.lang.IndexOutOfBoundsException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.util.function.Predicate
 import java.util.stream.Collectors
 import kotlin.Exception
 import kotlin.io.path.name
@@ -153,9 +150,12 @@ class SearchUser() {
             endFileImage = file.toString()
     }
         return endFileImage
+
     }
 companion object{
-    val DEFAULT_IMAGE = Paths.get("C:\\person.png")
+    val resourcesDir = File(System.getProperty("compose.application.resources.dir"))
+
+    val DEFAULT_IMAGE = Paths.get("D:\\Projects\\UFinder\\src\\main\\resources\\icons\\person.png")
         .toAbsolutePath()
         .toString()
     val URL = Paths.get("R:\\IT\\Admin\\Internal\\LogOnOff\\LogOnOff_New")
@@ -165,6 +165,11 @@ companion object{
         .toAbsolutePath()
         .toString()
 }
+
+
+
+
+
 
 }
 
