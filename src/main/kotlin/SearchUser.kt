@@ -154,6 +154,7 @@ class SearchUser() {
     }
 companion object{
     val resourcesDir = File(System.getProperty("compose.application.resources.dir"))
+    val paths = resourcesDir.resolve("config.txt").readLines()
 
     val DEFAULT_IMAGE = Paths.get("D:\\Projects\\UFinder\\src\\main\\resources\\icons\\person.png")
         .toAbsolutePath()
