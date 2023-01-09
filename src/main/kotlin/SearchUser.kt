@@ -11,9 +11,14 @@ import kotlin.io.path.name
 
 
 class SearchUser() {
-    fun personName(path: Path, userName:String):String {
 
-        val f = File(path.toUri())
+
+    private val resourcesDir = File(System.getProperty("compose.application.resources.dir"))
+    private val resourcesUrlPath = resourcesDir.resolve("config.txt").readLines().get(3)
+    val resourcesDefaultImagePath = resourcesDir.resolve("person.png").toURI()
+    private val resourcesUsersImagesPath = resourcesDir.resolve("config.txt").readLines().get(5)
+    fun personName(userName:String):String {
+        val f = File(Paths.get(resourcesUrlPath).toUri())
         var endFileName=""
         var name = userName
             .trim()
@@ -39,14 +44,14 @@ class SearchUser() {
         return endFileName
     }
 
-    fun personLogOnOff(path: Path, userName:String): String {
-        val f = File(path.toUri())
+    fun personLogOnOff(userName:String): String {
+        val f = File(Paths.get(resourcesUrlPath).toUri())
         var endfile: List<String> = emptyList()
         var endFileList: List<String> = emptyList()
         val filelist = f.listFiles()
         for (files in filelist) {
             if (files.name.startsWith(userName)) {
-                val filePath = File(path.toString(), files.name)
+                val filePath = File(resourcesUrlPath, files.name)
                 if(userName!="error"){
                 try {
                     val openfile = FileReader(filePath)
@@ -75,14 +80,14 @@ class SearchUser() {
             .replace("]","")
             .replace(",","")
     }
-    fun personLogOnOffAllLines(path: Path, userName:String): String {
-        val f = File(path.toUri())
+    fun personLogOnOffAllLines(userName:String): String {
+        val f = File(Paths.get(resourcesUrlPath).toUri())
         var endfile: List<String> = emptyList()
         var endFileList: List<String> = emptyList()
         val filelist = f.listFiles()
         for (files in filelist) {
             if (files.name.startsWith(userName)) {
-                val filePath = File(path.toString(), files.name)
+                val filePath = File(resourcesUrlPath, files.name)
                 if(userName!="error"){
                     try {
                         val openfile = FileReader(filePath)
@@ -112,14 +117,14 @@ class SearchUser() {
     }
 
 
-    fun personLogin(path:Path, userName:String):String {
-        val f = File(path.toUri())
+    fun personLogin(userName:String):String {
+        val f = File(Paths.get(resourcesUrlPath).toUri())
         var login = ""
         var endFileList :List<String> = emptyList()
         val filelist = f.listFiles()
         for (files in filelist) {
             if (files.name.startsWith(userName)) {
-                val filePath = File(path.toString(), files.name)
+                val filePath = File(resourcesUrlPath, files.name)
                 try {
                     val openfile = FileReader(filePath)
                     val endfile = openfile.readLines().takeLast(1).toString()
@@ -136,7 +141,7 @@ class SearchUser() {
 
 
     fun getImage(personName:String):String {
-        var path = URL_IMAGE
+        var path = Paths.get(resourcesUsersImagesPath).toAbsolutePath().toString()
         var endFileImage = ""
         try{
      val walk = Files.walk(Paths.get(path))
@@ -145,31 +150,13 @@ class SearchUser() {
          endFileImage = walk
 
     }catch (e:Exception){
-        path = DEFAULT_IMAGE
+        path = Paths.get(resourcesDefaultImagePath).toAbsolutePath().toString()
             val file = File(path)
             endFileImage = file.toString()
     }
         return endFileImage
 
     }
-companion object{
-    val resourcesDir = File(System.getProperty("compose.application.resources.dir"))
-    val paths = resourcesDir.resolve("config.txt").readLines()
-
-    val DEFAULT_IMAGE = Paths.get("D:\\Projects\\UFinder\\src\\main\\resources\\icons\\person.png")
-        .toAbsolutePath()
-        .toString()
-    val URL = Paths.get("R:\\IT\\Admin\\Internal\\LogOnOff\\LogOnOff_New")
-        .toAbsolutePath()
-        .toString()
-    val URL_IMAGE = Paths.get("\\\\192.168.6.55\\Updates\\Manager")
-        .toAbsolutePath()
-        .toString()
-}
-
-
-
-
 
 
 }

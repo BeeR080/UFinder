@@ -1,0 +1,7 @@
+Путь до фотки:
+D:\\Projects\\UFinder\\src\\main\\resources\\icons\\person.png
+Путь к логонофу:
+R:\\IT\\Admin\\Internal\\LogOnOff\\LogOnOff_New
+Путь к фоткам:
+\\\\192.168.6.55\\Updates\\Manager
+      
