@@ -44,7 +44,7 @@ fun App() {
     var textLogin by remember { mutableStateOf("Логин") }
     var textLogOnOf by remember { mutableStateOf(" ") }
     var isErrors by remember { mutableStateOf(false) }
-    var textImage = File(SearchUser().resourcesDefaultImagePath).toString()
+    var textImage by remember { mutableStateOf(File(SearchUser().resourcesDefaultImagePath).toString())}
     val errorMessage ="* поле ввода не должно быть пустым " +
             "\n* введенные данные не совпадают с данными в базе сотрдников"
     var tabIndex by remember { mutableStateOf(0) }
