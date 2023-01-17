@@ -1,6 +1,8 @@
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -9,35 +11,27 @@ import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.res.loadImageBitmap
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.useResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import java.io.File
 import kotlin.io.path.Path
-
 
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -50,7 +44,7 @@ fun App() {
     var textLogin by remember { mutableStateOf("Логин") }
     var textLogOnOf by remember { mutableStateOf(" ") }
     var isErrors by remember { mutableStateOf(false) }
-    var textImage = File(SearchUser.DEFAULT_IMAGE).toString()
+    var textImage by remember { mutableStateOf( File(SearchUser.DEFAULT_IMAGE).toString())}
     val errorMessage ="* поле ввода не должно быть пустым " +
             "\n* введенные данные не совпадают с данными в базе сотрдников"
     var tabIndex by remember { mutableStateOf(0) }
@@ -112,8 +106,6 @@ fun App() {
                         textImage = searchUsers.getImage(textName)
                             if (textName=="Not found")
                                 isErrors= true
-
-
 
                     }
                         else{

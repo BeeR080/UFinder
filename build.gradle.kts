@@ -1,3 +1,4 @@
+import org.apache.tools.ant.types.resources.Resources
 import org.jetbrains.compose.compose
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -20,7 +21,6 @@ dependencies {
     implementation(compose.desktop.currentOs)
 
 }
-
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "11"

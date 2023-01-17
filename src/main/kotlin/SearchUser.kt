@@ -1,18 +1,15 @@
 
-import androidx.compose.ui.text.capitalize
-import androidx.compose.ui.text.toLowerCase
+
 import java.io.File
 import java.io.FileReader
 import java.lang.IndexOutOfBoundsException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.util.function.Predicate
 import java.util.stream.Collectors
 import kotlin.Exception
 import kotlin.io.path.name
-
-
+    
 class SearchUser() {
     fun personName(path: Path, userName:String):String {
 
