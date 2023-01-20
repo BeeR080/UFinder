@@ -131,7 +131,7 @@ class SearchUser() {
                     endFileList = endfile.split(";").map { it -> it.trim() }
                     login = endFileList.get(3)
                 } catch (e: IndexOutOfBoundsException) {
-                    login ="error"
+                    login =""
                 }
             }
 
@@ -143,6 +143,7 @@ class SearchUser() {
     fun getImage(personName:String):String {
         var path = Paths.get(resourcesUsersImagesPath).toAbsolutePath().toString()
         var endFileImage = ""
+        if(personName!=""){
         try{
      val walk = Files.walk(Paths.get(path))
          .filter{it.name.startsWith(personName)}
@@ -154,6 +155,11 @@ class SearchUser() {
             val file = File(path)
             endFileImage = file.toString()
     }
+        }else{
+            path = Paths.get(resourcesDefaultImagePath).toAbsolutePath().toString()
+            val file = File(path)
+            endFileImage = file.toString()
+        }
         return endFileImage
 
     }

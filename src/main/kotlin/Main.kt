@@ -78,8 +78,8 @@ fun App() {
                         textName = searchUsers.personName(textEditText)
                         textLogin = searchUsers.personLogin( textName)
                         textLogOnOf = searchUsers.personLogOnOff(textName)
-                        textImage = searchUsers.getImage(textName)
-                            if (textName=="Not found")
+                        textImage = searchUsers.getImage(textLogin)
+                            if (textName=="Not found" && textLogin=="")
                                 isErrors= true
 
                     }
@@ -103,8 +103,8 @@ fun App() {
                         textName = searchUsers.personName(textEditText)
                         textLogin = searchUsers.personLogin(textName)
                         textLogOnOf = searchUsers.personLogOnOff(textName)
-                        textImage = searchUsers.getImage(textName)
-                            if (textName=="Not found")
+                        textImage = searchUsers.getImage(textLogin)
+                            if (textName=="Not found" && textLogin=="")
                                 isErrors= true
 
 
