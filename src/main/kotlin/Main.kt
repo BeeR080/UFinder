@@ -78,7 +78,7 @@ fun App() {
                         textName = searchUsers.personName(textEditText)
                         textLogin = searchUsers.personLogin( textName)
                         textLogOnOf = searchUsers.personLogOnOff(textName)
-                        textImage = searchUsers.getImage(textLogin)
+                        textImage = searchUsers.getImage(textName)
                             if (textName=="Not found")
                                 isErrors= true
 
