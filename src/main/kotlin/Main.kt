@@ -72,7 +72,7 @@ fun App() {
                 .fillMaxWidth()
                 .padding(12.dp)
                 .onKeyEvent {
-                    if (it.key == Key.Enter ) {
+                    if (it.key == Key.Enter || it.key == Key.NumPadEnter  ) {
                         if (textEditText.isNotBlank()){
                             isErrors=false
                         textName = searchUsers.personName(textEditText)
