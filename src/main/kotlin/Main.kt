@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import java.awt.TextField
 import java.io.File
 import kotlin.io.path.Path
 
@@ -57,8 +56,8 @@ fun App() {
             "\n* введенные данные не совпадают с данными в базе сотрдников"
     var tabIndex by remember { mutableStateOf(0) }
     val tabList = listOf("Недавние записи","За все время")
-   val list = (searchUsers.usersList(Path(SearchUser.URL),textEditText))
-    val options = listOf(list.joinToString())
+   val usersList = (searchUsers.usersList(Path(SearchUser.URL),textEditText))
+    val options = usersList
     //val options = listOf("Аббрар","Якушк","Уткин Андр", "Уткина Н")
 
 
@@ -73,24 +72,23 @@ fun App() {
 
 // Поле ввода логина/пароля
 
-
         OutlinedTextField(
-
             value = textEditText
                 .capitalize()
                 .trimStart(' ')
                 .replace("\\s+".toRegex()," ")
-
                 ,
             modifier = Modifier
                 .fillMaxWidth()
                 .onGloballyPositioned { coordinates->
                     textfieldSize = coordinates.size.toSize()
                 }
-                .padding(12.dp)
+
+
                 .onKeyEvent {
                     if (it.key == Key.Enter || it.key == Key.NumPadEnter ) {
                         if (textEditText.isNotBlank()){
+
                             isErrors=false
 
                         textName = searchUsers.personName(Path(SearchUser.URL), textEditText)
@@ -112,14 +110,13 @@ fun App() {
                     true
                 },
 
+
             shape = RoundedCornerShape(8.dp),
 
             trailingIcon = @Composable {
-
                 IconButton(
                     onClick = {
-                        expanded = !expanded
-                 /*       if (textEditText.isNotBlank()){
+                       if (textEditText.isNotBlank()){
                             isErrors = false
                         textName = searchUsers.personName(Path(SearchUser.URL), textEditText)
                         textLogin = searchUsers.personLogin(Path(SearchUser.URL), textName)
@@ -133,9 +130,13 @@ fun App() {
                         else{
                             isErrors = true
 
-                        }*/
+                        }
                               },
-                ) {
+
+                )
+
+                {
+
                     if(isErrors==false){
                     Icon(
                         Icons.Default.Search,
@@ -151,7 +152,36 @@ fun App() {
 
                     }
                 }
+                //Меню выпадания списка
+
+                val filteringOptions = options.filter{
+                    it.contains(
+                        textEditText,
+                        ignoreCase = true)
+                }
+                if (filteringOptions.isNotEmpty()){
+                    if(textEditText.length > 3){
+                        DropdownMenu(
+                            expanded = !expanded,
+                            focusable = false,
+                            onDismissRequest = { expanded = false },
+                            modifier = Modifier
+                                .width(with(LocalDensity.current) { textfieldSize.width.toDp() })
+                        ) {
+                            filteringOptions.forEach { users ->
+                                DropdownMenuItem(
+                                    onClick = {
+                                        textEditText = users
+
+                                    }){
+                                    Text(text = users)
+                                }
+                            }
+                        }
+                    }
+                }
             },
+
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = MyColor.Violet,
                 unfocusedLabelColor = MyColor.Gray,
@@ -174,11 +204,13 @@ fun App() {
                 }
 
                     },
+
             placeholder = {
                 Text(
                     color = MyColor.Gray,
                     text = "Введите фамилию сотрудника"
                 )
+
 
             },
 
@@ -195,29 +227,7 @@ fun App() {
                 color = MaterialTheme.colors.error,
                 modifier = Modifier.padding(start = 24.dp)
             )
-        //Меню выпадания списка
 
-        val filteringOptions = options.filter{it.contains(textEditText, ignoreCase = true)}
-        if (filteringOptions.isNotEmpty()){
-            if(textEditText.length > 1){
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-                modifier = Modifier
-                    .width(with(LocalDensity.current) { textfieldSize.width.toDp() })
-            ) {
-                filteringOptions.forEach { userList ->
-                    DropdownMenuItem(onClick = {
-                        textEditText = userList
-                        expanded = false
-
-                    }){
-                        Text(text = userList)
-                    }
-                }
-            }
-        }
-        }
 
 
         Row(modifier = Modifier

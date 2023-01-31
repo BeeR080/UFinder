@@ -111,7 +111,6 @@ class SearchUser() {
             .replace(",","")
     }
 
-
     fun personLogin(path:Path, userName:String):String {
         val f = File(path.toUri())
         var login = ""
@@ -133,7 +132,6 @@ class SearchUser() {
         }
         return login
     }
-
 
     fun getImage(personName:String):String {
         var path = URL_IMAGE
@@ -162,7 +160,6 @@ class SearchUser() {
         val f = File(path.toUri())
         var arrayList = mutableListOf<String>()
         var name = userName
-        var endFileList: String = ""
         val filelist = f.listFiles()
         for (files in filelist) {
             if (files.name.startsWith(name)){
@@ -171,14 +168,12 @@ class SearchUser() {
                 files.name
                     .indexOf("."))
                println(usersList)
-           // endFileList = usersList.toString()
                 arrayList.add(usersList)
-
-
         }
         }
-        println(arrayList)
-        return arrayList
+        if(arrayList.size > 1)  return arrayList
+
+        return emptyList()
     }
 companion object{
     val DEFAULT_IMAGE = Paths.get("C:\\person.png")
