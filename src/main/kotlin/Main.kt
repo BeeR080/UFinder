@@ -3,6 +3,7 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,20 +17,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.res.useResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import java.awt.TextField
 import java.io.File
 import kotlin.io.path.Path
 
@@ -38,6 +44,8 @@ import kotlin.io.path.Path
 @Preview
 @Composable
 fun App() {
+    var expanded by remember { mutableStateOf(false) }
+    var textfieldSize by remember { mutableStateOf(Size.Zero) }
     val searchUsers = remember { SearchUser() }
     var textEditText by remember { mutableStateOf("") }
     var textName by remember { mutableStateOf("Имя фамилия") }
@@ -49,6 +57,8 @@ fun App() {
             "\n* введенные данные не совпадают с данными в базе сотрдников"
     var tabIndex by remember { mutableStateOf(0) }
     val tabList = listOf("Недавние записи","За все время")
+   // val options = listOf(searchUsers.usersList(Path(SearchUser.URL),textName))
+    val options = listOf("Аббрар","Якушк","")
 
 
 // Интерфейс
@@ -62,22 +72,30 @@ fun App() {
 
 // Поле ввода логина/пароля
 
+
         OutlinedTextField(
+
             value = textEditText
                 .capitalize()
                 .trimStart(' ')
                 .replace("\\s+".toRegex()," ")
+
                 ,
             modifier = Modifier
                 .fillMaxWidth()
+                .onGloballyPositioned { coordinates->
+                    textfieldSize = coordinates.size.toSize()
+                }
                 .padding(12.dp)
                 .onKeyEvent {
-                    if (it.key == Key.Enter ) {
+                    if (it.key == Key.Enter || it.key == Key.NumPadEnter ) {
                         if (textEditText.isNotBlank()){
                             isErrors=false
+
                         textName = searchUsers.personName(Path(SearchUser.URL), textEditText)
                         textLogin = searchUsers.personLogin(Path(SearchUser.URL), textName)
                         textLogOnOf = searchUsers.personLogOnOff(Path(SearchUser.URL), textName)
+                            searchUsers.usersList(Path(SearchUser.URL),textName)
                         textImage = searchUsers.getImage(textLogin)
                             if (textName=="Not found" && textLogin=="")
                                 isErrors= true
@@ -96,9 +114,11 @@ fun App() {
             shape = RoundedCornerShape(8.dp),
 
             trailingIcon = @Composable {
+
                 IconButton(
                     onClick = {
-                        if (textEditText.isNotBlank()){
+                        expanded = !expanded
+                 /*       if (textEditText.isNotBlank()){
                             isErrors = false
                         textName = searchUsers.personName(Path(SearchUser.URL), textEditText)
                         textLogin = searchUsers.personLogin(Path(SearchUser.URL), textName)
@@ -112,7 +132,7 @@ fun App() {
                         else{
                             isErrors = true
 
-                        }
+                        }*/
                               },
                 ) {
                     if(isErrors==false){
@@ -174,6 +194,29 @@ fun App() {
                 color = MaterialTheme.colors.error,
                 modifier = Modifier.padding(start = 24.dp)
             )
+        //Меню выпадания списка
+
+        val filteringOptions = options.filter{it.contains(textEditText, ignoreCase = true)}
+        if (filteringOptions.isNotEmpty()){
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier
+                    .width(with(LocalDensity.current) { textfieldSize.width.toDp() })
+            ) {
+                filteringOptions.forEach { userList ->
+                    DropdownMenuItem(onClick = {
+                        textEditText = userList
+                        expanded = false
+
+                    }){
+                        Text(text = userList)
+                    }
+                }
+            }
+        }
+
+
         Row(modifier = Modifier
             .fillMaxSize()
 
@@ -336,43 +379,37 @@ fun App() {
 }
 
 /*@Composable
-fun tableLayout(){
-    var tabIndex by remember { mutableStateOf(0) }
-    val tabList = listOf("Недавние записи","За все время")
-    Column(
-        modifier = Modifier.fillMaxWidth()
-    ){
-        TabRow(
-            selectedTabIndex = tabIndex,
-            backgroundColor = MyColor.White
-        ){
-            tabList.forEachIndexed{index,title ->
-                Tab(
-                    selected = tabIndex == index,
-                    onClick = {
-                        tabIndex = index
-                    },
-                    text = {
-                        Text(text = title
-                        )
-                    }
-                )
-            }
-        }
+fun dropDonwMenu(textEditText: String,textfieldSize: Size, expanded: Boolean){
+    val options = listOf("Якушк", "Якушкин Константин", "Option 3", "Option 4", "Option 5")
+    var text = textEditText
+    var expanded = expanded
 
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = { expanded = false },
+        modifier = Modifier
+            .width(with(LocalDensity.current) { textfieldSize.width.toDp() })
+    ) {
+        options.forEach { label ->
+            DropdownMenuItem(onClick = {
+                text = label
+                expanded = false
+
+            }){
+                Text(text = label)
+            }
     }
-    when(tabIndex){
-        0-> textLogOnOf = searchUsers.personLogOnOff(Path(SearchUser.URL), textName)
-        1-> textLogOnOf = searchUsers.personLogOnOffAllLines(Path(SearchUser.URL), textName)
     }
 }*/
-
 
 fun imageFromFile(file: File): ImageBitmap {
     return org.jetbrains.skia.Image.makeFromEncoded(file
         .readBytes())
         .toComposeImageBitmap()
 }
+
+
+
 fun main() = application {
     Window(
 

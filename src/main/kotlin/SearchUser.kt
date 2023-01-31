@@ -157,6 +157,26 @@ class SearchUser() {
         }
         return endFileImage
     }
+
+    fun usersList(path: Path, userName: String): String {
+        val f = File(path.toUri())
+        var name = userName
+        var endFileList: String =""
+        val filelist = f.listFiles()
+        for (files in filelist) {
+            if (files.name.startsWith(name)){
+           var usersList =  files.name.substring(
+                0,
+                files.name
+                    .indexOf("."))
+            usersList.map { mutableListOf(it).toString() }
+            endFileList =  usersList
+            println(endFileList)
+
+        }
+        }
+        return endFileList
+    }
 companion object{
     val DEFAULT_IMAGE = Paths.get("C:\\person.png")
         .toAbsolutePath()
