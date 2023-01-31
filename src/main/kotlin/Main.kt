@@ -57,8 +57,9 @@ fun App() {
             "\n* введенные данные не совпадают с данными в базе сотрдников"
     var tabIndex by remember { mutableStateOf(0) }
     val tabList = listOf("Недавние записи","За все время")
-   // val options = listOf(searchUsers.usersList(Path(SearchUser.URL),textName))
-    val options = listOf("Аббрар","Якушк","")
+   val list = (searchUsers.usersList(Path(SearchUser.URL),textEditText))
+    val options = listOf(list.joinToString())
+    //val options = listOf("Аббрар","Якушк","Уткин Андр", "Уткина Н")
 
 
 // Интерфейс
@@ -95,7 +96,7 @@ fun App() {
                         textName = searchUsers.personName(Path(SearchUser.URL), textEditText)
                         textLogin = searchUsers.personLogin(Path(SearchUser.URL), textName)
                         textLogOnOf = searchUsers.personLogOnOff(Path(SearchUser.URL), textName)
-                            searchUsers.usersList(Path(SearchUser.URL),textName)
+                            searchUsers.usersList(Path(SearchUser.URL),textEditText)
                         textImage = searchUsers.getImage(textLogin)
                             if (textName=="Not found" && textLogin=="")
                                 isErrors= true
@@ -198,6 +199,7 @@ fun App() {
 
         val filteringOptions = options.filter{it.contains(textEditText, ignoreCase = true)}
         if (filteringOptions.isNotEmpty()){
+            if(textEditText.length > 1){
             DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
@@ -214,6 +216,7 @@ fun App() {
                     }
                 }
             }
+        }
         }
 
 

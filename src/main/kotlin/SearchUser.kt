@@ -158,10 +158,11 @@ class SearchUser() {
         return endFileImage
     }
 
-    fun usersList(path: Path, userName: String): String {
+    fun usersList(path: Path, userName: String): List<String> {
         val f = File(path.toUri())
+        var arrayList = mutableListOf<String>()
         var name = userName
-        var endFileList: String =""
+        var endFileList: String = ""
         val filelist = f.listFiles()
         for (files in filelist) {
             if (files.name.startsWith(name)){
@@ -169,13 +170,15 @@ class SearchUser() {
                 0,
                 files.name
                     .indexOf("."))
-            usersList.map { mutableListOf(it).toString() }
-            endFileList =  usersList
-            println(endFileList)
+               println(usersList)
+           // endFileList = usersList.toString()
+                arrayList.add(usersList)
+
 
         }
         }
-        return endFileList
+        println(arrayList)
+        return arrayList
     }
 companion object{
     val DEFAULT_IMAGE = Paths.get("C:\\person.png")
