@@ -3,7 +3,6 @@ import java.io.File
 import java.io.FileReader
 import java.lang.IndexOutOfBoundsException
 import java.nio.file.Files
-import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.stream.Collectors
 import kotlin.Exception
@@ -163,7 +162,24 @@ class SearchUser() {
         return endFileImage
 
     }
+    fun usersList(userName: String): List<String> {
+        val f = File(Paths.get(resourcesUrlPath).toUri())
+        var arrayList = mutableListOf<String>()
+        var name = userName
+        val filelist = f.listFiles()
+        for (files in filelist) {
+            if (files.name.startsWith(name)){
+                var usersList =  files.name.substring(
+                    0,
+                    files.name
+                        .indexOf("."))
+                arrayList.add(usersList)
+            }
+        }
+        if(arrayList.size > 1)  return arrayList
 
+        return emptyList()
+    }
 
 }
 

@@ -1,7 +1,9 @@
+
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,18 +17,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.res.useResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import java.io.File
@@ -37,7 +44,8 @@ import kotlin.io.path.Path
 @Preview
 @Composable
 fun App() {
-
+    var expanded by remember { mutableStateOf(false) }
+    var textfieldSize by remember { mutableStateOf(Size.Zero) }
     val searchUsers = remember { SearchUser() }
     var textEditText by remember { mutableStateOf("") }
     var textName by remember { mutableStateOf("Имя фамилия") }
@@ -49,7 +57,52 @@ fun App() {
             "\n* введенные данные не совпадают с данными в базе сотрдников"
     var tabIndex by remember { mutableStateOf(0) }
     val tabList = listOf("Недавние записи","За все время")
+    val usersList = (searchUsers.usersList(textEditText))
+    val options = usersList
 
+
+    fun getUserData(){
+        if (textEditText.isNotBlank()){
+            isErrors = false
+            textName = searchUsers.personName(textEditText)
+            textLogin = searchUsers.personLogin( textName)
+            textLogOnOf = searchUsers.personLogOnOff(textName)
+            textImage = searchUsers.getImage(textLogin)
+            textEditText = textName
+
+            if (textName=="Not found" && textLogin=="")
+                isErrors= true
+
+        }
+        else{
+            isErrors = true
+
+        }
+
+
+    }
+    fun getUserDataNoKeyEnter(key:KeyEvent){
+        if (key.key == Key.Enter || key.key == Key.NumPadEnter ) {
+            if (textEditText.isNotBlank()){
+
+                isErrors=false
+
+                textName = searchUsers.personName(textEditText)
+                textLogin = searchUsers.personLogin( textName)
+                textLogOnOf = searchUsers.personLogOnOff(textName)
+                textImage = searchUsers.getImage(textLogin)
+                textEditText = textName
+                if (textName=="Not found" && textLogin=="")
+                    isErrors= true
+
+            }
+            else{
+                isErrors = true
+
+
+            }
+        }
+    }
 
 // Интерфейс
     // Основной экран
@@ -70,52 +123,28 @@ fun App() {
                 ,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp)
+                .onGloballyPositioned { coordinates->
+                    textfieldSize = coordinates.size.toSize()
+                }
                 .onKeyEvent {
-                    if (it.key == Key.Enter || it.key == Key.NumPadEnter  ) {
-                        if (textEditText.isNotBlank()){
-                            isErrors=false
-                        textName = searchUsers.personName(textEditText)
-                        textLogin = searchUsers.personLogin( textName)
-                        textLogOnOf = searchUsers.personLogOnOff(textName)
-                        textImage = searchUsers.getImage(textLogin)
-                            if (textName=="Not found" && textLogin=="")
-                                isErrors= true
-
-                    }
-                        else{
-                            isErrors = true
-
-
-                        }
-                    }
+                   getUserDataNoKeyEnter(it)
 
                     true
                 },
+
 
             shape = RoundedCornerShape(8.dp),
 
             trailingIcon = @Composable {
                 IconButton(
                     onClick = {
-                        if (textEditText.isNotBlank()){
-                            isErrors = false
-                        textName = searchUsers.personName(textEditText)
-                        textLogin = searchUsers.personLogin(textName)
-                        textLogOnOf = searchUsers.personLogOnOff(textName)
-                        textImage = searchUsers.getImage(textLogin)
-                            if (textName=="Not found" && textLogin=="")
-                                isErrors= true
+                        getUserData()
 
-
-
-                    }
-                        else{
-                            isErrors = true
-
-                        }
                               },
-                ) {
+                    )
+
+                {
+
                     if(isErrors==false){
                     Icon(
                         Icons.Default.Search,
@@ -131,7 +160,43 @@ fun App() {
 
                     }
                 }
+
+                //Меню выпадания списка
+
+                val filteringOptions = options.filter{
+                    it.contains(
+                        textEditText,
+                        ignoreCase = true)
+                }
+                if (filteringOptions.isNotEmpty()){
+                    if(textEditText.length > 3){
+                        DropdownMenu(
+                            expanded = !expanded,
+                            focusable = false,
+                            onDismissRequest = { expanded = false },
+                            modifier = Modifier
+                                .width(with(
+                                    LocalDensity.current) {
+
+                                    textfieldSize.width.toDp()
+                                })
+
+                        ) {
+                            filteringOptions.forEach { users ->
+                                DropdownMenuItem(
+                                    onClick = {
+                                        textEditText = users
+                                        getUserData()
+                                    }){
+
+                                    Text(text = users)
+                                }
+                            }
+                        }
+                    }
+                }
             },
+
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = MyColor.Violet,
                 unfocusedLabelColor = MyColor.Gray,
@@ -154,11 +219,13 @@ fun App() {
                 }
 
                     },
+
             placeholder = {
                 Text(
                     color = MyColor.Gray,
                     text = "Введите фамилию сотрудника"
                 )
+
 
             },
 
@@ -175,6 +242,9 @@ fun App() {
                 color = MaterialTheme.colors.error,
                 modifier = Modifier.padding(start = 24.dp)
             )
+
+
+
         Row(modifier = Modifier
             .fillMaxSize()
 
@@ -336,11 +406,38 @@ fun App() {
     }
 }
 
+/*@Composable
+fun dropDonwMenu(textEditText: String,textfieldSize: Size, expanded: Boolean){
+    val options = listOf("Якушк", "Якушкин Константин", "Option 3", "Option 4", "Option 5")
+    var text = textEditText
+    var expanded = expanded
+
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = { expanded = false },
+        modifier = Modifier
+            .width(with(LocalDensity.current) { textfieldSize.width.toDp() })
+    ) {
+        options.forEach { label ->
+            DropdownMenuItem(onClick = {
+                text = label
+                expanded = false
+
+            }){
+                Text(text = label)
+            }
+    }
+    }
+}*/
+
 fun imageFromFile(file: File): ImageBitmap {
     return org.jetbrains.skia.Image.makeFromEncoded(file
         .readBytes())
         .toComposeImageBitmap()
 }
+
+
+
 fun main() = application {
     Window(
 
