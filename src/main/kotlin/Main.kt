@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -60,6 +61,49 @@ fun App() {
     val options = usersList
     //val options = listOf("Аббрар","Якушк","Уткин Андр", "Уткина Н")
 
+    fun getUserData(){
+        if (textEditText.isNotBlank()){
+            isErrors = false
+            textName = searchUsers.personName(Path(SearchUser.URL), textEditText)
+            textLogin = searchUsers.personLogin(Path(SearchUser.URL), textName)
+            textLogOnOf = searchUsers.personLogOnOff(Path(SearchUser.URL), textName)
+            textImage = searchUsers.getImage(textLogin)
+            textEditText = textName
+
+            if (textName=="Not found" && textLogin=="")
+                isErrors= true
+
+        }
+        else{
+            isErrors = true
+
+        }
+
+
+    }
+    fun getUserDataNoKeyEnter(key:KeyEvent){
+        if (key.key == Key.Enter || key.key == Key.NumPadEnter ) {
+            if (textEditText.isNotBlank()){
+
+                isErrors=false
+
+                textName = searchUsers.personName(Path(SearchUser.URL), textEditText)
+                textLogin = searchUsers.personLogin(Path(SearchUser.URL), textName)
+                textLogOnOf = searchUsers.personLogOnOff(Path(SearchUser.URL), textName)
+                searchUsers.usersList(Path(SearchUser.URL),textEditText)
+                textImage = searchUsers.getImage(textLogin)
+                textEditText = textName
+                if (textName=="Not found" && textLogin=="")
+                    isErrors= true
+
+            }
+            else{
+                isErrors = true
+
+
+            }
+        }
+    }
 
 // Интерфейс
     // Основной экран
@@ -70,7 +114,7 @@ fun App() {
         )
     {
 
-// Поле ввода логина/пароля
+// Поле ввода ФИО
 
         OutlinedTextField(
             value = textEditText
@@ -83,29 +127,8 @@ fun App() {
                 .onGloballyPositioned { coordinates->
                     textfieldSize = coordinates.size.toSize()
                 }
-
-
                 .onKeyEvent {
-                    if (it.key == Key.Enter || it.key == Key.NumPadEnter ) {
-                        if (textEditText.isNotBlank()){
-
-                            isErrors=false
-
-                        textName = searchUsers.personName(Path(SearchUser.URL), textEditText)
-                        textLogin = searchUsers.personLogin(Path(SearchUser.URL), textName)
-                        textLogOnOf = searchUsers.personLogOnOff(Path(SearchUser.URL), textName)
-                            searchUsers.usersList(Path(SearchUser.URL),textEditText)
-                        textImage = searchUsers.getImage(textLogin)
-                            if (textName=="Not found" && textLogin=="")
-                                isErrors= true
-
-                    }
-                        else{
-                            isErrors = true
-
-
-                        }
-                    }
+                   getUserDataNoKeyEnter(it)
 
                     true
                 },
@@ -116,24 +139,10 @@ fun App() {
             trailingIcon = @Composable {
                 IconButton(
                     onClick = {
-                       if (textEditText.isNotBlank()){
-                            isErrors = false
-                        textName = searchUsers.personName(Path(SearchUser.URL), textEditText)
-                        textLogin = searchUsers.personLogin(Path(SearchUser.URL), textName)
-                        textLogOnOf = searchUsers.personLogOnOff(Path(SearchUser.URL), textName)
-                        textImage = searchUsers.getImage(textLogin)
+                        getUserData()
 
-                            if (textName=="Not found" && textLogin=="")
-                                isErrors= true
-
-                    }
-                        else{
-                            isErrors = true
-
-                        }
                               },
-
-                )
+                    )
 
                 {
 
@@ -152,6 +161,7 @@ fun App() {
 
                     }
                 }
+
                 //Меню выпадания списка
 
                 val filteringOptions = options.filter{
@@ -166,14 +176,20 @@ fun App() {
                             focusable = false,
                             onDismissRequest = { expanded = false },
                             modifier = Modifier
-                                .width(with(LocalDensity.current) { textfieldSize.width.toDp() })
+                                .width(with(
+                                    LocalDensity.current) {
+
+                                    textfieldSize.width.toDp()
+                                })
+
                         ) {
                             filteringOptions.forEach { users ->
                                 DropdownMenuItem(
                                     onClick = {
                                         textEditText = users
-
+                                        getUserData()
                                     }){
+
                                     Text(text = users)
                                 }
                             }
