@@ -12,4 +12,5 @@
 
 
 ## Стек:
-📝JetPack Compose.
+📝Kotlin
+📝JetPack Compose
